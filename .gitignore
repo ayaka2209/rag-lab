@@ -1,0 +1,9 @@
+# 秘密のAPIキーは絶対にコミットしない
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/

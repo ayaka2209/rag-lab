@@ -1,0 +1,35 @@
+# RAG学習ラボ専用の PostgreSQL（pgvector 入り）。
+#
+# 本体の経費アプリ（リポジトリ直下の docker-compose.yml）とは
+# 完全に分離しています：
+#   - イメージ : pgvector/pgvector:pg16（pgvector拡張が最初から入っている）
+#   - ポート   : 5433（本体は5432。ぶつからないようにずらしている）
+#   - ボリューム: ragpgdata（本体の pgdata とは別物。経費データには一切触れない）
+#
+#   起動:  cd rag-lab && docker compose up -d
+#   停止:  docker compose down
+#   中身を見る: docker compose exec rag-db psql -U raglab -d raglab
+#
+# データは名前付きボリューム ragpgdata に残るので、down してもデータは消えません。
+
+services:
+  rag-db:
+    image: pgvector/pgvector:pg16
+    container_name: raglab-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: raglab
+      POSTGRES_PASSWORD: raglab_dev_password
+      POSTGRES_DB: raglab
+    ports:
+      - "5433:5432"          # ホスト5433 → コンテナ5432（本体5432と衝突させない）
+    volumes:
+      - ragpgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U raglab -d raglab"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  ragpgdata:
