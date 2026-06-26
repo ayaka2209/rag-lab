@@ -1,0 +1,77 @@
+{
+  "description": "RAG評価用のゴールデンセット。各質問に『正解の出どころ(relevant_source)』と『回答に含むべき事実(answer_facts)』を紐づける。retrieval評価はsourceの一致で、generation評価はfactsの被覆で測る。",
+  "items": [
+    {
+      "id": 1,
+      "question": "入社初日に持参するものは何ですか？",
+      "relevant_source": "nyuusha_tetsuzuki.md",
+      "answer_facts": ["身分証明書", "銀行口座", "年金手帳"]
+    },
+    {
+      "id": 2,
+      "question": "健康診断の費用は誰が負担しますか？",
+      "relevant_source": "kenkou_shindan.md",
+      "answer_facts": ["会社", "全額"]
+    },
+    {
+      "id": 3,
+      "question": "国内出張の日当はいくらですか？",
+      "relevant_source": "shucchou.md",
+      "answer_facts": ["3000円"]
+    },
+    {
+      "id": 4,
+      "question": "出張の申請はいつまでに必要ですか？",
+      "relevant_source": "shucchou.md",
+      "answer_facts": ["3営業日前"]
+    },
+    {
+      "id": 5,
+      "question": "パスワードは何文字以上で、どのくらいの頻度で変更しますか？",
+      "relevant_source": "joho_security.md",
+      "answer_facts": ["12文字", "3か月"]
+    },
+    {
+      "id": 6,
+      "question": "MVPに選ばれると賞金はいくらですか？",
+      "relevant_source": "hyoushou.md",
+      "answer_facts": ["10万円"]
+    },
+    {
+      "id": 7,
+      "question": "スポーツジムの補助は月いくらまでですか？",
+      "relevant_source": "fukuri_gym.md",
+      "answer_facts": ["3000円"]
+    },
+    {
+      "id": 8,
+      "question": "育児休業は最長いつまで延長できますか？",
+      "relevant_source": "ikuji_kyugyo.md",
+      "answer_facts": ["2歳"]
+    },
+    {
+      "id": 9,
+      "question": "残業時間の月の上限は何時間ですか？",
+      "relevant_source": "zangyo.md",
+      "answer_facts": ["45時間"]
+    },
+    {
+      "id": 10,
+      "question": "深夜勤務の割増賃金は何パーセントですか？",
+      "relevant_source": "zangyo.md",
+      "answer_facts": ["25%"]
+    },
+    {
+      "id": 11,
+      "question": "外部セミナーの受講費用は年間いくらまで補助されますか？",
+      "relevant_source": "kenshu.md",
+      "answer_facts": ["5万円"]
+    },
+    {
+      "id": 12,
+      "question": "退職はいつまでに申し出る必要がありますか？",
+      "relevant_source": "taishoku.md",
+      "answer_facts": ["1か月前"]
+    }
+  ]
+}

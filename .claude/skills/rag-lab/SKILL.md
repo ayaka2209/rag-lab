@@ -82,6 +82,11 @@ rag-lab/
     db_init.py            CREATE EXTENSION vector＋テーブル作成
     main.py               FastAPI（/health, /ingest_sample, /ingest, /ask）
   data/sample.md          デモ用の架空・社内文書
+  eval/                    Phase2 評価の土台（精度を数字で測る）
+    corpus/               評価用コーパス（別トピックの小文書10件）
+    dataset.json          ゴールデンQ&A（質問→正解source＋含むべき事実）
+    metrics.py            Recall@k / MRR / 事実カバー率（純Python）
+    run_eval.py           取り込み→検索→採点ランナー
   frontend/
     src/api.ts            ★APIの型定義（AskResponse / Chunk）＝TS学習の核
     src/App.tsx           チャット画面本体（useState、根拠チャンク開閉表示）
@@ -112,12 +117,27 @@ curl -X POST localhost:8770/ingest -H "Content-Type: application/json" \
 ```
 資料に無いことを聞くと「資料からは分かりません」と幻覚せず答えるのが正しい挙動。
 
+## 評価（Phase2）の回し方
+
+精度を数字で測る土台。詳細は `eval/README.md`。
+```bash
+.venv/bin/python -m eval.run_eval                # 検索のみ(Recall@k/MRR)。埋め込みのみで安い
+.venv/bin/python -m eval.run_eval --judge        # 生成も(事実カバー率)。LLM呼び出し
+.venv/bin/python -m eval.run_eval --judge --faithfulness  # 忠実性判定も
+.venv/bin/python -m eval.run_eval --reset        # コーパス入れ直してから
+```
+- ゴールデンの正解は「出どころ(source)」で持つ＝設定を変えて入れ直しても評価が再現できる。
+- **生成(gemini-2.5-flash)は無料枠の1日上限が小さい(20前後)**。--judge は枠を食うので
+  日に何度も回せない。429は途中集計して優雅に停止する作り。検索評価は枠が別で気軽に回せる。
+- 現状トピックが明確に分かれ Recall@1=1.000（満点）。物差しとしての価値はPhase3で変更の
+  良し悪しを数字で判定するときに出る。難化（言い換え・distractor追加）も今後の課題。
+
 ## Phaseロードマップ
 
 - **Phase1（完了）**：動く最小RAG。取り込み→検索→根拠付き回答。
 - **フロント追加（完了）**：React+TS+Vite のチャット画面。
-- Phase2：評価（Recall@k / Ragas）— 精度を数字で測る
-- Phase3：チャンク戦略の実験
+- **Phase2（完了）**：評価の土台。`eval/` に Recall@k/MRR/事実カバー率/忠実性。
+- Phase3：チャンク戦略の実験（評価の数字で効果を測る）
 - Phase4：ハイブリッド検索＋リランキング
 - Phase5：応用（マルチクエリ、HyDE など）
 

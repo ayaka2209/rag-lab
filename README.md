@@ -109,8 +109,10 @@ npm install
 
 ## Phase の進め方
 
-- **Phase1（いまここ）**：動く最小RAG（このディレクトリ）
-- Phase2：評価の土台（Recall@k / Ragas）— 「精度を数字で測る」
-- Phase3：チャンク戦略の実験
+- **Phase1（完了）**：動く最小RAG（このディレクトリ）
+- **フロント（完了）**：`frontend/` のチャット画面（React+TS+Vite）
+- **Phase2（完了）**：評価の土台 — `eval/`（Recall@k / MRR / 事実カバー率 / 忠実性）。
+  詳細は [`eval/README.md`](eval/README.md)
+- Phase3：チャンク戦略の実験（評価の数字で効果を測る）
 - Phase4：ハイブリッド検索＋リランキング
 - Phase5：応用（マルチクエリ、HyDE など）
