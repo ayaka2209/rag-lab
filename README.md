@@ -70,6 +70,43 @@ curl -X POST http://localhost:8770/ask \
 
 ブラウザで http://localhost:8770/docs を開くと、画面から各APIを試せる。
 
+## フロントエンド（チャット画面）
+
+`frontend/` に React + TypeScript + Vite 製のチャット画面がある。
+普通のユーザーが質問を打って、根拠付きの回答を見られる。
+
+### 起動手順（毎回これ）
+
+**ターミナル①：バックエンド**
+```bash
+cd rag-lab
+docker compose up -d                          # pgvector（まだなら）
+.venv/bin/uvicorn app.main:app --port 8770    # API（:8770）
+```
+
+**ターミナル②：フロントエンド**
+```bash
+cd rag-lab/frontend
+nvm use 18        # ★必須。システムのNode16ではViteが動かない
+npm run dev       # → http://localhost:5173
+```
+
+ブラウザで **http://localhost:5173** を開く。
+
+### 初回だけ
+```bash
+cd rag-lab/frontend
+nvm use 18
+npm install
+```
+
+### 仕組み・ハマりどころ
+- フロントの `/ask` 呼び出しは Vite の proxy（`vite.config.ts`）が裏で
+  `127.0.0.1:8770` に転送する。だから CORS 設定は不要で backend は無改造。
+- proxy先は `localhost` ではなく **`127.0.0.1`**。Node18 は localhost を
+  IPv6(::1) に解決し、IPv4で待つ uvicorn に繋がらず 500 になるため。
+- 型定義は `src/api.ts`（`AskResponse` / `Chunk`）、画面は `src/App.tsx`。
+
 ## Phase の進め方
 
 - **Phase1（いまここ）**：動く最小RAG（このディレクトリ）

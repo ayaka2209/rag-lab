@@ -1,0 +1,164 @@
+:root {
+  /* Air Seoul 配色: 白背景 + ミントグリーンのアクセント */
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --panel-2: #f4faf8;
+  --text: #2b2f33;
+  --muted: #7b858c;
+  --accent: #1ec8a5; /* Air Seoul のミントグリーン */
+  --accent-strong: #17b594;
+  --border: #e3e8e8;
+  --danger: #e5484d;
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+header h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  color: var(--accent);
+}
+
+.sub {
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ask-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.ask-bar input {
+  flex: 1;
+  padding: 12px 14px;
+  font-size: 15px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+}
+
+.ask-bar input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(30, 200, 165, 0.15);
+}
+
+.ask-bar button {
+  padding: 0 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ask-bar button:hover:not(:disabled) {
+  background: var(--accent-strong);
+}
+
+.ask-bar button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  background: rgba(229, 72, 77, 0.08);
+  border: 1px solid var(--danger);
+  border-radius: 10px;
+  color: var(--danger);
+  font-size: 14px;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.turns {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.turn {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.q {
+  font-weight: 600;
+  color: var(--accent-strong);
+  margin-bottom: 10px;
+}
+
+.a {
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.sources {
+  margin-top: 14px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.sources summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 13px;
+  user-select: none;
+}
+
+.chunk {
+  margin-top: 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.chunk-meta {
+  color: var(--accent-strong);
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.chunk-body {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  font-family: inherit;
+}
