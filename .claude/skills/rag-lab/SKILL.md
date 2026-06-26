@@ -87,6 +87,8 @@ rag-lab/
     dataset.json          ゴールデンQ&A（質問→正解source＋含むべき事実）
     metrics.py            Recall@k / MRR / 事実カバー率（純Python）
     run_eval.py           取り込み→検索→採点ランナー
+    corpus_long/handbook.md  Phase3用の長文コーパス（分割の差を出すため）
+    compare_chunking.py   Phase3 チャンク戦略の比較実験
   frontend/
     src/api.ts            ★APIの型定義（AskResponse / Chunk）＝TS学習の核
     src/App.tsx           チャット画面本体（useState、根拠チャンク開閉表示）
@@ -99,7 +101,10 @@ rag-lab/
 
 - **Geminiのモデル選定**：このGoogleプロジェクトでは `text-embedding-004` は404、
   `gemini-2.0-flash`系は無料枠0(429)。→ 埋め込みは `gemini-embedding-001`、
-  生成は `gemini-2.5-flash` を使う。勝手に他モデルへ変えない。
+  生成は `gemini-2.5-flash`。勝手に他モデルへ変えない。
+- **無料枠は2系統**：生成=**1日約20回**/モデル（モデルごとに別枠。flash枯れたら
+  flash-lite へ自動フォールバック）。埋め込み=**毎分約100回**。どちらも429は待って
+  自動再試行する（generate=モデル切替, _embed=55秒待ち）。デモや--judgeで生成枠が枯れがち。
 - **Viteのproxy先は `127.0.0.1`**（`localhost`にしない）。Node18は localhost を
   IPv6(::1) に解決し、IPv4で待つ uvicorn に繋がらず 500 になる。
 - **フロントは Node 18 必須**。`nvm use 18` を忘れると Node16 でViteが動かない。
@@ -137,7 +142,9 @@ curl -X POST localhost:8770/ingest -H "Content-Type: application/json" \
 - **Phase1（完了）**：動く最小RAG。取り込み→検索→根拠付き回答。
 - **フロント追加（完了）**：React+TS+Vite のチャット画面。
 - **Phase2（完了）**：評価の土台。`eval/` に Recall@k/MRR/事実カバー率/忠実性。
-- Phase3：チャンク戦略の実験（評価の数字で効果を測る）
+- **Phase3（完了）**：チャンク戦略の実験。`eval/compare_chunking.py` で戦略×サイズを
+  カバー@1/2/4 で比較。chunking.py に fixed/sentence 戦略。k=1で分割の差が出る。
+- Phase4：ハイブリッド検索＋リランキング
 - Phase4：ハイブリッド検索＋リランキング
 - Phase5：応用（マルチクエリ、HyDE など）
 

@@ -16,8 +16,16 @@ from .chunking import chunk_text
 from .models import Chunk, Document
 
 
-def ingest_text(db: Session, source: str, text: str) -> dict:
-    chunks = chunk_text(text)
+def ingest_text(
+    db: Session,
+    source: str,
+    text: str,
+    chunk_size: int | None = None,
+    overlap: int | None = None,
+    strategy: str | None = None,
+) -> dict:
+    # 省略時は settings の既定値。Phase3の実験では戦略やサイズを上書きして比較する。
+    chunks = chunk_text(text, chunk_size=chunk_size, overlap=overlap, strategy=strategy)
     if not chunks:
         return {"source": source, "chunks": 0}
 

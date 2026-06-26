@@ -113,6 +113,8 @@ npm install
 - **フロント（完了）**：`frontend/` のチャット画面（React+TS+Vite）
 - **Phase2（完了）**：評価の土台 — `eval/`（Recall@k / MRR / 事実カバー率 / 忠実性）。
   詳細は [`eval/README.md`](eval/README.md)
-- Phase3：チャンク戦略の実験（評価の数字で効果を測る）
+- **Phase3（完了）**：チャンク戦略の実験 — `eval/compare_chunking.py`。
+  分割の戦略・サイズを変えて精度を比較（`chunking.py` に fixed/sentence 戦略）
+- Phase4：ハイブリッド検索＋リランキング
 - Phase4：ハイブリッド検索＋リランキング
 - Phase5：応用（マルチクエリ、HyDE など）

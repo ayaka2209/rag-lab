@@ -33,17 +33,31 @@ def _client() -> genai.Client:
     return genai.Client(api_key=settings.gemini_api_key)
 
 
-def _embed(texts: list[str], task_type: str) -> list[list[float]]:
-    resp = _client().models.embed_content(
-        model=settings.embedding_model,
-        contents=texts,
-        config=types.EmbedContentConfig(
-            task_type=task_type,
-            # 出力次元を 768 に固定（DBの Vector(768) と一致させる）
-            output_dimensionality=settings.embedding_dim,
-        ),
-    )
-    return [e.values for e in resp.embeddings]
+def _embed(texts: list[str], task_type: str, max_retries: int = 6) -> list[list[float]]:
+    # 503（一時的な混雑）は短い待ちでリトライ。
+    # 429（埋め込みの毎分上限・無料枠100回/分など）は約1分待てば回復するので待って再試行。
+    for attempt in range(max_retries):
+        try:
+            resp = _client().models.embed_content(
+                model=settings.embedding_model,
+                contents=texts,
+                config=types.EmbedContentConfig(
+                    task_type=task_type,
+                    # 出力次元を 768 に固定（DBの Vector(768) と一致させる）
+                    output_dimensionality=settings.embedding_dim,
+                ),
+            )
+            return [e.values for e in resp.embeddings]
+        except errors.ServerError:
+            if attempt == max_retries - 1:
+                raise
+            time.sleep(2 * (attempt + 1))
+        except errors.ClientError as e:
+            if e.code == 429 and attempt < max_retries - 1:
+                time.sleep(55)  # 毎分の枠が空くのを待つ
+                continue
+            raise
+    return []
 
 
 def embed_documents(texts: list[str]) -> list[list[float]]:

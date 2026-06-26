@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     generation_models: list[str] = ["gemini-2.5-flash", "gemini-2.5-flash-lite"]
 
     # --- チャンク分割のパラメータ（Phase3で実験する対象）---
+    # 分割戦略: "fixed"（文字数固定長）/ "sentence"（文単位で詰める）
+    chunk_strategy: str = "fixed"
     # 1チャンクの文字数。大きすぎると検索が雑になり、小さすぎると文脈が切れる。
     chunk_size: int = 500
     # 隣り合うチャンクで重ねる文字数。境界で文脈が切れるのを防ぐ。
