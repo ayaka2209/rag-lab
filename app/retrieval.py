@@ -65,5 +65,13 @@ def answer(db: Session, question: str, top_k: int | None = None) -> dict:
         return {"answer": "まだ文書が取り込まれていません。", "contexts": []}
 
     prompt = build_prompt(question, contexts)
-    generated = gemini_client.generate(prompt)
+    try:
+        generated = gemini_client.generate(prompt)
+    except gemini_client.QuotaExhausted:
+        # 無料枠切れでも検索は動いているので、根拠資料は返して状況を伝える。
+        generated = (
+            "⚠️ いま Gemini の無料利用枠（1日の生成回数）を使い切っています。"
+            "検索は動いているので、根拠になりそうな資料は下に表示しています。"
+            "時間をおく（枠は日次でリセット）と回答が再開します。"
+        )
     return {"answer": generated, "contexts": contexts}

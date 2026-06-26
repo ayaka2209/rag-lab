@@ -56,21 +56,31 @@ def embed_query(text: str) -> list[float]:
     return _embed([text], task_type="RETRIEVAL_QUERY")[0]
 
 
+class QuotaExhausted(Exception):
+    """生成モデルが全て無料枠の上限(429)に達して回答できないとき。"""
+
+
 def generate(prompt: str, max_retries: int = 3) -> str:
     """組み立てたプロンプトをLLMに渡し、回答テキストを得る。
 
-    503（モデルの一時的な混雑）は、少し待って数回リトライする。
-    無料枠でたまに起きるので、ここで吸収しておくと安定する。
+    - 503（モデルの一時的な混雑）は、少し待って数回リトライする。
+    - 429（無料枠の上限）は、settings.generation_models の次のモデルへフォールバックする。
+      モデルごとに無料枠が別なので、flashが枠切れでも flash-lite で回答を続けられる。
+    - 全モデルが枠切れなら QuotaExhausted を投げる（呼び出し側で優しく扱う）。
     """
-    for attempt in range(max_retries):
-        try:
-            resp = _client().models.generate_content(
-                model=settings.generation_model,
-                contents=prompt,
-            )
-            return resp.text or ""
-        except errors.ServerError:
-            if attempt == max_retries - 1:
-                raise
-            time.sleep(2 * (attempt + 1))
-    return ""
+    for model in settings.generation_models:
+        for attempt in range(max_retries):
+            try:
+                resp = _client().models.generate_content(model=model, contents=prompt)
+                return resp.text or ""
+            except errors.ServerError:
+                if attempt == max_retries - 1:
+                    break  # このモデルは諦めて次のモデルへ
+                time.sleep(2 * (attempt + 1))
+            except errors.ClientError as e:
+                if e.code == 429:
+                    break  # 無料枠切れ。次のモデルにフォールバック
+                raise  # それ以外のクライアントエラーはそのまま投げる
+    raise QuotaExhausted(
+        "生成モデルが全て無料枠の上限に達しました。時間をおく（枠は日次でリセット）と回復します。"
+    )

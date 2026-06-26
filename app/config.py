@@ -23,8 +23,9 @@ class Settings(BaseSettings):
     # 768に縮めて使う（DBの Vector(768) 列に合わせる）。
     embedding_model: str = "gemini-embedding-001"
     embedding_dim: int = 768
-    # 回答生成モデル（このプロジェクトでは 2.5-flash に無料枠あり）
-    generation_model: str = "gemini-2.5-flash"
+    # 回答生成モデル。先頭から順に試し、無料枠切れ(429)なら次へフォールバックする。
+    # モデルごとに無料枠が別なので、flashが枠切れでも flash-lite で回答を続けられる。
+    generation_models: list[str] = ["gemini-2.5-flash", "gemini-2.5-flash-lite"]
 
     # --- チャンク分割のパラメータ（Phase3で実験する対象）---
     # 1チャンクの文字数。大きすぎると検索が雑になり、小さすぎると文脈が切れる。
