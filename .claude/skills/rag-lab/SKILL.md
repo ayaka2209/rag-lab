@@ -89,6 +89,9 @@ rag-lab/
     run_eval.py           取り込み→検索→採点ランナー
     corpus_long/handbook.md  Phase3用の長文コーパス（分割の差を出すため）
     compare_chunking.py   Phase3 チャンク戦略の比較実験
+    corpus_codes/         Phase4用（型番付き＋言い換え。検索方式の差を出す）
+    dataset_codes.json    Phase4用ゴールデン
+    compare_search.py     Phase4 vector/keyword/hybrid の比較実験
   frontend/
     src/api.ts            ★APIの型定義（AskResponse / Chunk）＝TS学習の核
     src/App.tsx           チャット画面本体（useState、根拠チャンク開閉表示）
@@ -144,7 +147,10 @@ curl -X POST localhost:8770/ingest -H "Content-Type: application/json" \
 - **Phase2（完了）**：評価の土台。`eval/` に Recall@k/MRR/事実カバー率/忠実性。
 - **Phase3（完了）**：チャンク戦略の実験。`eval/compare_chunking.py` で戦略×サイズを
   カバー@1/2/4 で比較。chunking.py に fixed/sentence 戦略。k=1で分割の差が出る。
-- Phase4：ハイブリッド検索＋リランキング
+- **Phase4（一部・ハイブリッド検索）**：`retrieval.search(method=...)` に keyword(pg_trgm)
+  と hybrid(RRF融合) を追加。`eval/compare_search.py` で3方式比較。結果=このデータでは
+  vectorが既に満点でhybridは上回らず、keywordは言い換えに弱い→hybridは最良に並ぶ（取り
+  こぼし最小）。**リランキングは未実装**（次。Geminiを使う方式は生成枠に注意）。
 - Phase4：ハイブリッド検索＋リランキング
 - Phase5：応用（マルチクエリ、HyDE など）
 

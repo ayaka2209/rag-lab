@@ -115,6 +115,7 @@ npm install
   詳細は [`eval/README.md`](eval/README.md)
 - **Phase3（完了）**：チャンク戦略の実験 — `eval/compare_chunking.py`。
   分割の戦略・サイズを変えて精度を比較（`chunking.py` に fixed/sentence 戦略）
-- Phase4：ハイブリッド検索＋リランキング
+- **Phase4（ハイブリッド検索：完了）**：ベクトル＋キーワード(pg_trgm)をRRFで融合
+  — `retrieval.search(method=...)` ／ `eval/compare_search.py`。リランキングは次
 - Phase4：ハイブリッド検索＋リランキング
 - Phase5：応用（マルチクエリ、HyDE など）

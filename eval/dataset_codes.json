@@ -1,0 +1,53 @@
+{
+  "description": "ハイブリッド検索の効果を見るためのゴールデンセット。6つの文書はほぼ同一テンプレートで、違いは型番(F-204等)と部署だけ。意味（文の内容）で見分けがつかないので、ベクトル検索だけだと混同しやすい。型番のキーワード一致が効くかを見る。",
+  "items": [
+    {
+      "id": 1,
+      "question": "F-204の受付窓口はどこですか？",
+      "relevant_source": "form_f204.md",
+      "answer_facts": ["経理部"]
+    },
+    {
+      "id": 2,
+      "question": "SEC-12の受付窓口はどこですか？",
+      "relevant_source": "reg_sec12.md",
+      "answer_facts": ["情報システム部"]
+    },
+    {
+      "id": 3,
+      "question": "A-17の受付窓口はどこですか？",
+      "relevant_source": "form_a17.md",
+      "answer_facts": ["人事部"]
+    },
+    {
+      "id": 4,
+      "question": "OP-330の受付窓口はどこですか？",
+      "relevant_source": "proc_op330.md",
+      "answer_facts": ["品質管理部"]
+    },
+    {
+      "id": 5,
+      "question": "HR-08の受付窓口はどこですか？",
+      "relevant_source": "policy_hr08.md",
+      "answer_facts": ["人材開発部"]
+    },
+    {
+      "id": 6,
+      "question": "T-250の受付窓口はどこですか？",
+      "relevant_source": "form_t250.md",
+      "answer_facts": ["総務部"]
+    },
+    {
+      "id": 7,
+      "question": "ゲストが車をとめるスペースはどこにありますか？",
+      "relevant_source": "syn_parking.md",
+      "answer_facts": ["地下2階"]
+    },
+    {
+      "id": 8,
+      "question": "ランチは有料ですか、それとも無料ですか？",
+      "relevant_source": "syn_lunch.md",
+      "answer_facts": ["無料"]
+    }
+  ]
+}
