@@ -39,6 +39,11 @@ class Settings(BaseSettings):
     # 質問に近い上位何件のチャンクをLLMに渡すか
     top_k: int = 4
 
+    # --- リランキング（Phase4）---
+    # クロスエンコーダ（ローカルの採点モデル）。日本語対応・小型でCPUでも動く。
+    # 生成LLMではないので、Geminiの無料枠は使わない。初回だけモデルをDLする。
+    reranker_model: str = "hotchpotch/japanese-reranker-cross-encoder-small-v1"
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 

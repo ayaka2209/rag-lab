@@ -147,10 +147,14 @@ curl -X POST localhost:8770/ingest -H "Content-Type: application/json" \
 - **Phase2（完了）**：評価の土台。`eval/` に Recall@k/MRR/事実カバー率/忠実性。
 - **Phase3（完了）**：チャンク戦略の実験。`eval/compare_chunking.py` で戦略×サイズを
   カバー@1/2/4 で比較。chunking.py に fixed/sentence 戦略。k=1で分割の差が出る。
-- **Phase4（一部・ハイブリッド検索）**：`retrieval.search(method=...)` に keyword(pg_trgm)
-  と hybrid(RRF融合) を追加。`eval/compare_search.py` で3方式比較。結果=このデータでは
-  vectorが既に満点でhybridは上回らず、keywordは言い換えに弱い→hybridは最良に並ぶ（取り
-  こぼし最小）。**リランキングは未実装**（次。Geminiを使う方式は生成枠に注意）。
+- **Phase4（完了・ハイブリッド検索＋リランキング）**：`retrieval.search(method=...)` に
+  keyword(pg_trgm)/hybrid(RRF融合)/rerank(クロスエンコーダ) を追加。
+  リランカーは `app/reranker.py`（`sentence-transformers` の CrossEncoder・
+  日本語モデル `hotchpotch/japanese-reranker-cross-encoder-small-v1`・ローカル/生成枠不要）。
+  `eval/compare_search.py` で4方式比較。結果=クリーンなソース単位評価では vector が満点で
+  hybrid/rerank も横並び、keyword のみ言い換えに弱い。リランカー自体は正しく採点する
+  （同話題の候補から真の答えを最上位に）。効果は passage単位・ノイジーなデータで出る。
+  次：もっと意地悪な評価データで差を可視化 / 応用（マルチクエリ・HyDE）。
 - Phase4：ハイブリッド検索＋リランキング
 - Phase5：応用（マルチクエリ、HyDE など）
 

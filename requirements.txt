@@ -5,3 +5,5 @@ psycopg2-binary==2.9.10
 pydantic-settings==2.7.1
 pgvector==0.3.6
 google-genai
+# リランキング用のクロスエンコーダ（Phase4）。torch等を含む。生成LLMではない。
+sentence-transformers==5.6.0

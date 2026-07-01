@@ -30,7 +30,7 @@ EVAL_DIR = Path(__file__).resolve().parent
 CODES_CORPUS_DIR = EVAL_DIR / "corpus_codes"
 DATASET_PATH = EVAL_DIR / "dataset_codes.json"
 
-METHODS = ["vector", "keyword", "hybrid"]
+METHODS = ["vector", "keyword", "hybrid", "rerank"]
 
 
 def ensure_corpus(db) -> None:

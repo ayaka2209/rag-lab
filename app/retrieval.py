@@ -74,6 +74,13 @@ def search(
     if method == "hybrid":
         return _hybrid_search(db, question, top_k)
 
+    if method == "rerank":
+        # ハイブリッドで候補を多めに集め、クロスエンコーダで精査して上位を選ぶ。
+        from . import reranker
+
+        candidates = _hybrid_search(db, question, CANDIDATE_K)
+        return reranker.rerank(question, candidates, top_k)
+
     raise ValueError(f"未知の検索方式: {method}")
 
 
