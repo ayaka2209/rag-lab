@@ -7,3 +7,8 @@ pgvector==0.3.6
 google-genai
 # リランキング用のクロスエンコーダ（Phase4）。torch等を含む。生成LLMではない。
 sentence-transformers==5.6.0
+# PDF取り込み用（テキスト抽出 pypdf / 評価用サンプルPDF生成 reportlab）
+pypdf==6.14.2
+reportlab==5.0.0
+# ブラウザからのPDFアップロード（FastAPIのUploadFile）に必要
+python-multipart==0.0.32

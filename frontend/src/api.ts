@@ -38,3 +38,30 @@ export async function ask(question: string, topK?: number): Promise<AskResponse>
   // 以降このデータは「answer と contexts を持つ」と TS が把握する。
   return (await res.json()) as AskResponse;
 }
+
+// PDF取り込みのレスポンスの形。
+export type IngestResponse = {
+  source: string;
+  chunks: number;
+};
+
+// PDFファイルをアップロードして取り込む関数。
+// FormData に file を詰めて /ingest_pdf に送る（Vite proxy 経由で backend へ）。
+export async function ingestPdf(file: File): Promise<IngestResponse> {
+  const form = new FormData();
+  form.append("file", file);
+
+  const res = await fetch("/ingest_pdf", { method: "POST", body: form });
+  if (!res.ok) {
+    // backend は失敗時に {detail: "..."} を返すので、それを拾う。
+    let detail = `取り込みに失敗しました (${res.status})`;
+    try {
+      const body = await res.json();
+      if (body?.detail) detail = body.detail;
+    } catch {
+      /* JSONでなければ既定メッセージのまま */
+    }
+    throw new Error(detail);
+  }
+  return (await res.json()) as IngestResponse;
+}

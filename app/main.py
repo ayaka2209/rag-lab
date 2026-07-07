@@ -14,7 +14,7 @@ RAG学習ラボの API（FastAPI）。
 
 from pathlib import Path
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -58,6 +58,20 @@ def ingest_sample(db: Session = Depends(get_db)) -> dict:
 @app.post("/ingest")
 def ingest_endpoint(req: IngestRequest, db: Session = Depends(get_db)) -> dict:
     return ingest.ingest_text(db, source=req.source, text=req.text)
+
+
+@app.post("/ingest_pdf")
+async def ingest_pdf_endpoint(
+    file: UploadFile = File(...), db: Session = Depends(get_db)
+) -> dict:
+    """ブラウザからアップロードされたPDFを取り込む。"""
+    if not (file.filename or "").lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="PDFファイルを選んでください。")
+    data = await file.read()
+    try:
+        return ingest.ingest_pdf_bytes(db, source=file.filename, data=data)
+    except Exception as e:  # 壊れたPDFなどはメッセージにして返す
+        raise HTTPException(status_code=400, detail=f"取り込みに失敗しました: {e}")
 
 
 @app.post("/ask")

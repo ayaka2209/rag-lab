@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ask, type AskResponse, type Chunk } from "./api";
+import { useRef, useState } from "react";
+import { ask, ingestPdf, type AskResponse, type Chunk } from "./api";
 
 // 画面に並べる1件の会話（質問と、それに対する回答）。
 type Turn = {
@@ -14,6 +14,28 @@ export default function App() {
   const [turns, setTurns] = useState<Turn[]>([]); // これまでの会話
   const [loading, setLoading] = useState(false); // 問い合わせ中か
   const [error, setError] = useState<string | null>(null);
+
+  // PDF取り込み用
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadMsg, setUploadMsg] = useState<string | null>(null);
+
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadMsg(null);
+    setUploading(true);
+    try {
+      const res = await ingestPdf(file);
+      setUploadMsg(`✅ 「${res.source}」を取り込みました（${res.chunks}チャンク）。質問できます。`);
+    } catch (err) {
+      setUploadMsg(`⚠️ ${err instanceof Error ? err.message : "取り込みに失敗しました"}`);
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = ""; // 同じファイルを再選択できるように
+    }
+  }
 
   async function handleAsk() {
     const question = input.trim();
@@ -46,13 +68,32 @@ export default function App() {
         </p>
       </header>
 
+      <div className="upload-bar">
+        <input
+          ref={fileRef}
+          type="file"
+          accept="application/pdf,.pdf"
+          onChange={handleUpload}
+          disabled={uploading}
+          id="pdf-input"
+          hidden
+        />
+        <label htmlFor="pdf-input" className={`upload-btn ${uploading ? "disabled" : ""}`}>
+          {uploading ? "取り込み中…" : "＋ PDFを取り込む"}
+        </label>
+        {uploadMsg && <span className="upload-msg">{uploadMsg}</span>}
+      </div>
+
       <div className="ask-bar">
         <input
           type="text"
           value={input}
           placeholder="例: リモートワークは週何日まで可能ですか？"
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleAsk()}
+          // 日本語入力の変換確定Enterで送信しないよう、IME変換中(isComposing)は無視する
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.nativeEvent.isComposing) handleAsk();
+          }}
           disabled={loading}
         />
         <button onClick={handleAsk} disabled={loading || !input.trim()}>

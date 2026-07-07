@@ -17,6 +17,7 @@ export default defineConfig({
       "/ask": "http://127.0.0.1:8770",
       "/ingest": "http://127.0.0.1:8770",
       "/ingest_sample": "http://127.0.0.1:8770",
+      "/ingest_pdf": "http://127.0.0.1:8770",
       "/health": "http://127.0.0.1:8770",
     },
   },
